@@ -1,17 +1,17 @@
-#include "usuario.h"
+#include "pessoa.h"
 #include <stdio.h>
 #include <string.h>
 
 int main() {
-  Usuario usuario;
+  Pessoa pessoa;
   
-  usuario.id = 1;
-  strncpy(usuario.nome, "João da Silva", MAX_NOME);
-  usuario.idade = 30;
-  strncpy(usuario.email, "joao@dasilva.com", MAX_EMAIL);
-  strncpy(usuario.telefone, "1234567890", MAX_TELEFONE);
-  usuario.data_cadastro = time(NULL);
-  printf("Usuario: %s, %d, %s, %s, %s\n", usuario.nome, usuario.idade,
-         usuario.email, usuario.telefone, ctime(&usuario.data_cadastro));
+  pessoa.id = 1;
+  strncpy(pessoa.nome, "João da Silva", MAX_NOME);
+  pessoa.idade = 30;
+  strncpy(pessoa.email, "joao@dasilva.com", MAX_EMAIL);
+  strncpy(pessoa.telefone, "1234567890", MAX_TELEFONE);
+  pessoa.data_cadastro = time(NULL);
+  printf("Pessoa: %s, %d, %s, %s, %s\n", pessoa.nome, pessoa.idade,
+         pessoa.email, pessoa.telefone, ctime(&pessoa.data_cadastro));
   return 0;
 }
