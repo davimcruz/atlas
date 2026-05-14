@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "listar.h"
 #include <stdio.h>
 #include <string.h>
@@ -30,7 +31,7 @@ Pessoa* buscar_por_id(Pessoa pessoas[], int total, int id) {
 
 Pessoa* buscar_por_nome(Pessoa pessoas[], int total, const char* nome) {
     for (int i = 0; i < total; i++) {
-        if (strstr(pessoas[i].nome, nome)) {
+        if (strcasestr(pessoas[i].nome, nome)) {
             return &pessoas[i];
         }
     }
