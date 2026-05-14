@@ -1,93 +1,135 @@
-/******************************************************************************
-Menu do projeto 
-*******************************************************************************/
 #include <stdio.h>
 #include <string.h>
-typedef struct {
-int id;
-char nome[100];
-char cpf[12];
-char email[100];
-char telefone[15];
-int ativo;
-} Pessoa;
-// Cadastro
-void cadastrarPessoa(Pessoa pessoas[], int *quantidade) {
-if (*quantidade >= 100) {
-printf("Limite de cadastro atingido!\n");
-return;
+#include "pessoa.h"
+#include "cadastrar.h"
+#include "listar.h"
+#include "edicao.h"
+#include "salvar.h"
+
+#define MAX_PESSOAS 100
+
+void aguardar_enter() {
+    printf("\nPressione Enter para continuar...");
+    getchar();
 }
-printf("\n--- Cadastro de Pessoa ---\n");
-printf("Nome: ");
-scanf(" %[^\n]", pessoas[*quantidade].nome);
-printf("CPF: ");
-scanf(" %[^\n]", pessoas[*quantidade].cpf);
-printf("Email: ");
-scanf(" %[^\n]", pessoas[*quantidade].email);
-printf("Telefone: ");
-scanf(" %[^\n]", pessoas[*quantidade].telefone);
-printf("Status (1-Ativo / 0-Inativo): ");
-scanf("%d", &pessoas[*quantidade].ativo);
-pessoas[*quantidade].id = *quantidade + 1;
-(*quantidade)++;
-printf("Pessoa cadastrada com sucesso!\n");
+
+void carregar_pessoas(Pessoa pessoas[], int *total) {
+    FILE *arquivo;
+
+    arquivo = fopen("pessoas.bin", "rb");
+
+    if (arquivo == NULL) {
+        *total = 0;
+        return;
+    }
+
+    fread(total, sizeof(int), 1, arquivo);
+    fread(pessoas, sizeof(Pessoa), *total, arquivo);
+
+    fclose(arquivo);
 }
-// Listagem
-void listarPessoas(Pessoa pessoas[], int quantidade) {
-printf("\n--- Lista de Pessoas ---\n");
-if (quantidade == 0) {
-printf("Nenhuma pessoa cadastrada.\n");
-return;
-}
-for (int i = 0; i < quantidade; i++) {
-printf("\nPessoa %d\n", i + 1);
-printf("Nome: %s\n", pessoas[i].nome);
-printf("CPF: %s\n", pessoas[i].cpf);
-printf("Email: %s\n", pessoas[i].email);
-printf("Telefone: %s\n", pessoas[i].telefone);
-if (pessoas[i].ativo == 1)
-printf("Status: Ativo\n");
-else
-printf("Status: Inativo\n");
-}
-}
-// Menu
+
 int main() {
-Pessoa pessoas[100];
-int quantidade = 0;
-int opcao;
-do {
-printf("\n--- MENU ---\n");
-printf("Pessoas cadastradas: %d\n", quantidade);
-printf("1 - Cadastrar Pessoa\n");
-printf("2 - Listar Pessoas\n");
-printf("0 - Sair\n");
-printf("Escolha uma opcao: ");
-/* Verifica se a entrada é um número inteiro */
-if (scanf("%d", &opcao) != 1) {
+    Pessoa pessoas[MAX_PESSOAS];
+    int total = 0;
+    int opcao;
 
-    while (getchar() != '\n');  /* Limpa o buffer até o final da linha */
+    carregar_pessoas(pessoas, &total);
 
-    opcao = -1;
+    do {
+        printf("\n=====================================\n");
+        printf("         SISTEMA ATLAS - v1.0        \n");
+        printf("=====================================\n");
+        printf("1. Cadastrar pessoa\n");
+        printf("2. Listar pessoas\n");
+        printf("3. Buscar por ID\n");
+        printf("4. Buscar por nome\n");
+        printf("5. Editar pessoa\n");
+        printf("6. Excluir pessoa\n");
+        printf("0. Sair\n");
+        printf("=====================================\n");
+        printf("Escolha: ");
 
-} else {
+        if (scanf("%d", &opcao) != 1) {
+            while (getchar() != '\n');
+            opcao = -1;
+        } else {
+            getchar();
+        }
 
-    getchar();  /* Consome o '\n' deixado pelo scanf */
+        switch (opcao) {
+            case 1:
+                if (total >= MAX_PESSOAS) {
+                    printf("Limite de cadastro atingido.\n");
+                } else {
+                    pessoas[total] = cadastrar_pessoa(total + 1);
+                    total++;
+                    salvar_pessoas_em_binario(pessoas, total);
+                }
+                aguardar_enter();
+                break;
+            case 2:
+                listar_todos(pessoas, total);
+                aguardar_enter();
+                break;
+            case 3: {
+                int id;
+                Pessoa *p;
+                printf("Digite o ID: ");
+                scanf("%d", &id);
+                getchar();
+                p = buscar_por_id(pessoas, total, id);
+                if (p != NULL) {
+                    printf("ID: %d\n", p->id);
+                    printf("Nome: %s\n", p->nome);
+                    printf("CPF: %s\n", p->cpf);
+                    printf("Idade: %d\n", p->idade);
+                    printf("Email: %s\n", p->email);
+                    printf("Telefone: %s\n", p->telefone);
+                } else {
+                    printf("Pessoa nao encontrada.\n");
+                }
+                aguardar_enter();
+                break;
+            }
+            case 4: {
+                char nome[MAX_NOME];
+                Pessoa *p;
+                printf("Digite o nome: ");
+                fgets(nome, MAX_NOME, stdin);
+                nome[strcspn(nome, "\n")] = '\0';
+                p = buscar_por_nome(pessoas, total, nome);
+                if (p != NULL) {
+                    printf("ID: %d\n", p->id);
+                    printf("Nome: %s\n", p->nome);
+                    printf("CPF: %s\n", p->cpf);
+                    printf("Idade: %d\n", p->idade);
+                    printf("Email: %s\n", p->email);
+                    printf("Telefone: %s\n", p->telefone);
+                } else {
+                    printf("Pessoa nao encontrada.\n");
+                }
+                aguardar_enter();
+                break;
+            }
+            case 5:
+                editar_pessoa();
+                carregar_pessoas(pessoas, &total);
+                aguardar_enter();
+                break;
+            case 6:
+                printf("Funcao inativa no momento.\n");
+                aguardar_enter();
+                break;
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opcao invalida.\n");
+                aguardar_enter();
+        }
 
-}
-switch (opcao) {
-case 1:
-cadastrarPessoa(pessoas, &quantidade);
-break;
-case 2:
-listarPessoas(pessoas, quantidade);
-break;
-case 0:
-printf("Saindo...\n");
-break;
-default:
-printf("Opcao invalida!\n");
-}
-} while (opcao != 0);
-return 0;
+    } while (opcao != 0);
+
+    return 0;
 }

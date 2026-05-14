@@ -16,5 +16,5 @@ void salvar_pessoas_em_binario(Pessoa pessoas[], int total) {
 
     fclose(arquivo);
 
-    printf("Pessoas salvas em binario com sucesso.\n");
+    printf("Pessoa cadastrada com sucesso.\n");
 }
