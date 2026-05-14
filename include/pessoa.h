@@ -6,7 +6,8 @@
 #define MAX_NOME 50
 #define MAX_EMAIL 50
 #define MAX_TELEFONE 50
-#define MAX_CPF 14
+#define MAX_CPF 12
+#define DB_PATH "pessoas.bin"
 
 typedef struct {
     int id;
@@ -18,4 +19,4 @@ typedef struct {
     time_t data_cadastro;
 } Pessoa;
 
-#endif 
+#endif

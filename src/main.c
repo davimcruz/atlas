@@ -5,6 +5,7 @@
 #include "listar.h"
 #include "edicao.h"
 #include "salvar.h"
+#include "excluir.h"
 
 #define MAX_PESSOAS 100
 
@@ -14,17 +15,24 @@ void aguardar_enter() {
 }
 
 void carregar_pessoas(Pessoa pessoas[], int *total) {
-    FILE *arquivo;
-
-    arquivo = fopen("pessoas.bin", "rb");
+    FILE *arquivo = fopen(DB_PATH, "rb");
 
     if (arquivo == NULL) {
         *total = 0;
         return;
     }
 
-    fread(total, sizeof(int), 1, arquivo);
-    fread(pessoas, sizeof(Pessoa), *total, arquivo);
+    if (fread(total, sizeof(int), 1, arquivo) != 1) {
+        *total = 0;
+    } else {
+        if (*total > MAX_PESSOAS) {
+            *total = MAX_PESSOAS;
+        }
+        
+        if (fread(pessoas, sizeof(Pessoa), *total, arquivo) != (size_t)*total) {
+            *total = 0;
+        }
+    }
 
     fclose(arquivo);
 }
@@ -60,73 +68,66 @@ int main() {
         switch (opcao) {
             case 1:
                 if (total >= MAX_PESSOAS) {
-                    printf("Limite de cadastro atingido.\n");
+                    printf("Limite atingido.\n");
                 } else {
                     pessoas[total] = cadastrar_pessoa(total + 1);
                     total++;
                     salvar_pessoas_em_binario(pessoas, total);
                 }
-                aguardar_enter();
                 break;
+
             case 2:
                 listar_todos(pessoas, total);
-                aguardar_enter();
                 break;
+
             case 3: {
                 int id;
-                Pessoa *p;
-                printf("Digite o ID: ");
+                printf("ID: ");
                 scanf("%d", &id);
                 getchar();
-                p = buscar_por_id(pessoas, total, id);
-                if (p != NULL) {
-                    printf("ID: %d\n", p->id);
-                    printf("Nome: %s\n", p->nome);
-                    printf("CPF: %s\n", p->cpf);
-                    printf("Idade: %d\n", p->idade);
-                    printf("Email: %s\n", p->email);
-                    printf("Telefone: %s\n", p->telefone);
+                
+                Pessoa *p = buscar_por_id(pessoas, total, id);
+                if (p) {
+                    printf("\nID: %d\nNome: %s\nCPF: %s\n", p->id, p->nome, p->cpf);
                 } else {
-                    printf("Pessoa nao encontrada.\n");
+                    printf("Nao encontrado.\n");
                 }
-                aguardar_enter();
                 break;
             }
+
             case 4: {
                 char nome[MAX_NOME];
-                Pessoa *p;
-                printf("Digite o nome: ");
+                printf("Nome: ");
                 fgets(nome, MAX_NOME, stdin);
                 nome[strcspn(nome, "\n")] = '\0';
-                p = buscar_por_nome(pessoas, total, nome);
-                if (p != NULL) {
-                    printf("ID: %d\n", p->id);
-                    printf("Nome: %s\n", p->nome);
-                    printf("CPF: %s\n", p->cpf);
-                    printf("Idade: %d\n", p->idade);
-                    printf("Email: %s\n", p->email);
-                    printf("Telefone: %s\n", p->telefone);
+                
+                Pessoa *p = buscar_por_nome(pessoas, total, nome);
+                if (p) {
+                    printf("\nID: %d\nNome: %s\nCPF: %s\n", p->id, p->nome, p->cpf);
                 } else {
-                    printf("Pessoa nao encontrada.\n");
+                    printf("Nao encontrado.\n");
                 }
-                aguardar_enter();
                 break;
             }
+
             case 5:
-                editar_pessoa();
-                carregar_pessoas(pessoas, &total);
-                aguardar_enter();
+                editar_pessoa(pessoas, total);
                 break;
+
             case 6:
-                printf("Funcao inativa no momento.\n");
-                aguardar_enter();
+                excluir_pessoa(pessoas, &total);
                 break;
+
             case 0:
                 printf("Saindo...\n");
                 break;
+
             default:
                 printf("Opcao invalida.\n");
-                aguardar_enter();
+        }
+
+        if (opcao != 0) {
+            aguardar_enter();
         }
 
     } while (opcao != 0);
