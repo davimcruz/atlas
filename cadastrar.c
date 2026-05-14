@@ -59,15 +59,25 @@ Pessoa cadastrar_pessoa(int proximo_id) {
 
     } while (!cpf_valido(nova_pessoa.cpf));
 
-    do {
-        printf("Digite a idade: ");
-        scanf("%d", &nova_pessoa.idade);
+  do {
+    printf("Digite a idade: ");
+
+    if (scanf("%d", &nova_pessoa.idade) != 1) {
+        printf("Idade invalida.\n");
+
+        limpar_buffer_entrada();
+
+        nova_pessoa.idade = -1;
+    } else {
+
+        limpar_buffer_entrada();
 
         if (!idade_valida(nova_pessoa.idade)) {
             printf("Idade invalida.\n");
         }
+    }
 
-    } while (!idade_valida(nova_pessoa.idade));
+} while (!idade_valida(nova_pessoa.idade));
 
     do {
         printf("Digite o email: ");
