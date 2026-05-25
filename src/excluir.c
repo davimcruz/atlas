@@ -22,6 +22,16 @@ void excluir_pessoa(Pessoa pessoas[], int *total) {
         printf("Nao encontrado.\n");
         return;
     }
+    
+    
+char confirm;
+printf("Tem certeza que quer excluir? (s/n): ");
+scanf(" %c", &confirm);
+
+if (confirm != 's' && confirm != 'S') {
+    printf("Cancelado.\n");
+    return;
+}
 
     for (int i = idx; i < *total - 1; i++) {
         pessoas[i] = pessoas[i + 1];
