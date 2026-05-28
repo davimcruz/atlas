@@ -21,5 +21,5 @@ docker run -it --rm atlas-app
 Se você tiver o `gcc` instalado:
 
 ```bash
-gcc main.c -o main && ./main
+gcc src/*.c -I include -o atlas && ./atlas 
 ```
