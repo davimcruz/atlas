@@ -44,6 +44,11 @@ int main() {
 
     carregar_pessoas(pessoas, &total);
 
+    int proximo_id = 0;
+    for (int i = 0; i < total; i++)
+        if (pessoas[i].id > proximo_id)
+            proximo_id = pessoas[i].id;
+
     do {
         printf("\n=====================================\n");
         printf("         SISTEMA ATLAS - v1.0        \n");
@@ -70,7 +75,7 @@ int main() {
                 if (total >= MAX_PESSOAS) {
                     printf("Limite atingido.\n");
                 } else {
-                    pessoas[total] = cadastrar_pessoa(total + 1);
+                    pessoas[total] = cadastrar_pessoa(++proximo_id);
                     total++;
                     salvar_pessoas_em_binario(pessoas, total);
                 }
