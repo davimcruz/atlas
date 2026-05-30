@@ -4,6 +4,7 @@
 #include "salvar.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void editar_pessoa(Pessoa pessoas[], int total) {
     int id;
@@ -28,41 +29,109 @@ void editar_pessoa(Pessoa pessoas[], int total) {
     Pessoa *p = &pessoas[indice];
     char buf[100];
 
-    printf("\nNovo nome (Enter para manter '%s'): ", p->nome);
-    fgets(buf, sizeof(buf), stdin);
-    if (buf[0] != '\n') {
-        buf[strcspn(buf, "\n")] = '\0';
-        strcpy(p->nome, buf);
-    }
+    
+    do {
+        printf("Novo nome (Enter para manter '%s'): ", p->nome);
+        fgets(buf, sizeof(buf), stdin);
 
+        if (strlen(buf) == sizeof(buf) - 1 && buf[sizeof(buf) - 2] != '\n') {
+            limpar_buffer_entrada();
+        }
+
+        buf[strcspn(buf, "\n")] = '\0';
+
+        if (buf[0] == '\0') {
+            break;
+        }
+
+        if (strlen(buf) == 0) {
+            printf("Nome nao pode ser vazio.\n");
+            continue;
+        }
+
+        strcpy(p->nome, buf);
+        break;
+    } while (1);
+
+    
+    do {
+        printf("Novo CPF (Enter para manter '%s'): ", p->cpf);
+        fgets(buf, sizeof(buf), stdin);
+        buf[strcspn(buf, "\n")] = '\0';
+
+        if (buf[0] == '\0') {
+            break;
+        }
+
+        if (cpf_valido(buf)) {
+            strcpy(p->cpf, buf);
+            break;
+        }
+
+        printf("CPF invalido. Digite 11 digitos numericos.\n");
+    } while (1);
+
+    
+    do {
+        printf("Nova idade (Enter para manter '%d'): ", p->idade);
+        fgets(buf, sizeof(buf), stdin);
+        buf[strcspn(buf, "\n")] = '\0';
+
+        if (buf[0] == '\0') {
+            break;
+        }
+
+        char *endptr;
+        long val = strtol(buf, &endptr, 10);
+
+        if (*endptr != '\0') {
+            printf("Idade invalida. Digite apenas numeros.\n");
+            continue;
+        }
+
+        if (!idade_valida((int)val)) {
+            printf("Idade invalida. Deve ser entre 0 e 100.\n");
+            continue;
+        }
+
+        p->idade = (int)val;
+        break;
+    } while (1);
+
+    
     do {
         printf("Novo email (Enter para manter '%s'): ", p->email);
         fgets(buf, sizeof(buf), stdin);
-        if (buf[0] == '\n') {
+        buf[strcspn(buf, "\n")] = '\0';
+
+        if (buf[0] == '\0') {
             break;
         }
-        
-        buf[strcspn(buf, "\n")] = '\0';
+
         if (email_valido(buf)) {
             strcpy(p->email, buf);
             break;
         }
-        printf("Email invalido.\n");
+
+        printf("Email invalido. Deve conter '@'.\n");
     } while (1);
 
+    
     do {
         printf("Novo telefone (Enter para manter '%s'): ", p->telefone);
         fgets(buf, sizeof(buf), stdin);
-        if (buf[0] == '\n') {
+        buf[strcspn(buf, "\n")] = '\0';
+
+        if (buf[0] == '\0') {
             break;
         }
 
-        buf[strcspn(buf, "\n")] = '\0';
         if (telefone_valido(buf)) {
             strcpy(p->telefone, buf);
             break;
         }
-        printf("Telefone invalido.\n");
+
+        printf("Telefone invalido. Digite 11 digitos numericos.\n");
     } while (1);
 
     salvar_pessoas_em_binario(pessoas, total);

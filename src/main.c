@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "pessoa.h"
 #include "cadastrar.h"
 #include "listar.h"
@@ -7,11 +8,18 @@
 #include "salvar.h"
 #include "excluir.h"
 
-#define MAX_PESSOAS 100
+void limpar_tela() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
 
 void aguardar_enter() {
     printf("\nPressione Enter para continuar...");
     getchar();
+    limpar_tela();
 }
 
 void carregar_pessoas(Pessoa pessoas[], int *total) {
@@ -28,7 +36,6 @@ void carregar_pessoas(Pessoa pessoas[], int *total) {
         if (*total > MAX_PESSOAS) {
             *total = MAX_PESSOAS;
         }
-        
         if (fread(pessoas, sizeof(Pessoa), *total, arquivo) != (size_t)*total) {
             *total = 0;
         }
@@ -58,7 +65,9 @@ int main() {
         printf("3. Buscar por ID\n");
         printf("4. Buscar por nome\n");
         printf("5. Editar pessoa\n");
-        printf("6. Excluir pessoa\n");
+        printf("6. Excluir pessoa (backup preservado)\n");
+        printf("7. Excluir permanentemente\n");
+        printf("8. Restaurar backup\n");
         printf("0. Sair\n");
         printf("=====================================\n");
         printf("Escolha: ");
@@ -90,10 +99,15 @@ int main() {
                 printf("ID: ");
                 scanf("%d", &id);
                 getchar();
-                
+
                 Pessoa *p = buscar_por_id(pessoas, total, id);
                 if (p) {
-                    printf("\nID: %d\nNome: %s\nCPF: %s\n", p->id, p->nome, p->cpf);
+                    printf("\nID: %d\n", p->id);
+                    printf("Nome: %s\n", p->nome);
+                    printf("CPF: %s\n", p->cpf);
+                    printf("Idade: %d\n", p->idade);
+                    printf("Email: %s\n", p->email);
+                    printf("Telefone: %s\n", p->telefone);
                 } else {
                     printf("Nao encontrado.\n");
                 }
@@ -105,13 +119,21 @@ int main() {
                 printf("Nome: ");
                 fgets(nome, MAX_NOME, stdin);
                 nome[strcspn(nome, "\n")] = '\0';
-                
-                Pessoa *p = buscar_por_nome(pessoas, total, nome);
-                if (p) {
-                    printf("\nID: %d\nNome: %s\nCPF: %s\n", p->id, p->nome, p->cpf);
-                } else {
-                    printf("Nao encontrado.\n");
+
+                int encontrados = 0;
+                for (int i = 0; i < total; i++) {
+                    if (buscar_por_nome(&pessoas[i], 1, nome)) {
+                        printf("\nID: %d\n", pessoas[i].id);
+                        printf("Nome: %s\n", pessoas[i].nome);
+                        printf("CPF: %s\n", pessoas[i].cpf);
+                        printf("Idade: %d\n", pessoas[i].idade);
+                        printf("Email: %s\n", pessoas[i].email);
+                        printf("Telefone: %s\n", pessoas[i].telefone);
+                        printf("------------------\n");
+                        encontrados++;
+                    }
                 }
+                if (encontrados == 0) printf("Nao encontrado.\n");
                 break;
             }
 
@@ -121,6 +143,14 @@ int main() {
 
             case 6:
                 excluir_pessoa(pessoas, &total);
+                break;
+
+            case 7:
+                excluir_permanente(pessoas, &total);
+                break;
+
+            case 8:
+                restaurar_backup(pessoas, &total);
                 break;
 
             case 0:

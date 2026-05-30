@@ -1,7 +1,20 @@
-#define _GNU_SOURCE
 #include "listar.h"
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
+
+
+static char* meu_strcasestr(const char *haystack, const char *needle) {
+    if (!*needle) return (char*)haystack;
+    for (; *haystack; haystack++) {
+        const char *h = haystack, *n = needle;
+        while (*h && *n && tolower((unsigned char)*h) == tolower((unsigned char)*n)) {
+            h++; n++;
+        }
+        if (!*n) return (char*)haystack;
+    }
+    return NULL;
+}
 
 void listar_todos(Pessoa pessoas[], int total) {
     if (total == 0) {
@@ -31,7 +44,7 @@ Pessoa* buscar_por_id(Pessoa pessoas[], int total, int id) {
 
 Pessoa* buscar_por_nome(Pessoa pessoas[], int total, const char* nome) {
     for (int i = 0; i < total; i++) {
-        if (strcasestr(pessoas[i].nome, nome)) {
+        if (meu_strcasestr(pessoas[i].nome, nome)) {
             return &pessoas[i];
         }
     }
