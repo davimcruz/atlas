@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+// fucao de edicao
 void editar_pessoa(Pessoa pessoas[], int total) {
     int id;
     int indice = -1;
