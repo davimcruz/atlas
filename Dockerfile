@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN gcc main.c -o main
+RUN gcc src/*.c -I include -o /usr/local/bin/atlas
 
-CMD ["./main"]
+CMD ["atlas"]
