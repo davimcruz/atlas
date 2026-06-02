@@ -13,8 +13,7 @@ static char* meu_strcasestr(const char *haystack, const char *needle) {
     for (; *haystack; haystack++) {
         const char *h = haystack, *n = needle;
         while (*h && *n && tolower((unsigned char)*h) == tolower((unsigned char)*n)) {
-            h++;
-            n++;
+            h++; n++;
         }
         if (!*n) return (char*)haystack;
     }
@@ -32,23 +31,20 @@ void listar_todos(Pessoa pessoas[], int total) {
 
     // Percorre e imprime os dados de cada pessoa cadastrada
     for (int i = 0; i < total; i++) {
-
-        char data_formatada[30];
-
-        strftime(
-            data_formatada,
-            sizeof(data_formatada),
-            "%d/%m/%Y %H:%M:%S",
-            localtime(&pessoas[i].data_cadastro)
-        );
-
         printf("\nID: %d\n", pessoas[i].id);
         printf("Nome: %s\n", pessoas[i].nome);
         printf("CPF: %s\n", pessoas[i].cpf);
         printf("Idade: %d\n", pessoas[i].idade);
         printf("Email: %s\n", pessoas[i].email);
         printf("Telefone: %s\n", pessoas[i].telefone);
+
+        char data_formatada[30];
+        strftime(data_formatada, sizeof(data_formatada),
+                 "%d/%m/%Y %H:%M:%S",
+                 localtime(&pessoas[i].data_cadastro));
+
         printf("Data de cadastro: %s\n", data_formatada);
+
         printf("------------------\n");
     }
 }
