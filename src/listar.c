@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include <time.h>
 
 // Implementação própria de strcasestr para busca de substring sem diferenciar maiúsculas de minúsculas.
 // Retorna ponteiro para a primeira ocorrência de needle em haystack, ou NULL se não encontrar.
@@ -37,14 +36,7 @@ void listar_todos(Pessoa pessoas[], int total) {
         printf("Idade: %d\n", pessoas[i].idade);
         printf("Email: %s\n", pessoas[i].email);
         printf("Telefone: %s\n", pessoas[i].telefone);
-
-        char data_formatada[30];
-        strftime(data_formatada, sizeof(data_formatada),
-                 "%d/%m/%Y %H:%M:%S",
-                 localtime(&pessoas[i].data_cadastro));
-
-        printf("Data de cadastro: %s\n", data_formatada);
-
+        printf("Data de cadastro: %ld\n", (long)pessoas[i].data_cadastro);
         printf("------------------\n");
     }
 }
