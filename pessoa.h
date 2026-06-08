@@ -3,7 +3,7 @@
 
 #include <time.h>
 
-#define MAX_NOME 50
+#define MAX_NOME 51
 #define MAX_EMAIL 50
 #define MAX_TELEFONE 50
 #define MAX_CPF 14

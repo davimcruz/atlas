@@ -45,10 +45,21 @@ Pessoa cadastrar_pessoa(int proximo_id) {
     nova_pessoa.id = proximo_id;
     nova_pessoa.data_cadastro = time(NULL);
 
+    do {
     printf("\nDigite o nome: ");
     fgets(nova_pessoa.nome, MAX_NOME, stdin);
-    nova_pessoa.nome[strcspn(nova_pessoa.nome, "\n")] = '\0';
 
+    if (strchr(nova_pessoa.nome, '\n') == NULL) {
+        printf("Nome invalido. Digite no maximo 50 caracteres.\n");
+
+        limpar_buffer_entrada();
+
+        nova_pessoa.nome[0] = '\0';
+    } else {
+        nova_pessoa.nome[strcspn(nova_pessoa.nome, "\n")] = '\0';
+    }
+
+} while (strlen(nova_pessoa.nome) == 0);
     do {
         printf("Digite o CPF: ");
         scanf("%11s", nova_pessoa.cpf);
