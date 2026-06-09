@@ -36,6 +36,7 @@ void listar_todos(Pessoa pessoas[], int total) {
         printf("Idade: %d\n", pessoas[i].idade);
         printf("Email: %s\n", pessoas[i].email);
         printf("Telefone: %s\n", pessoas[i].telefone);
+        printf("Data de cadastro: %ld\n", (long)pessoas[i].data_cadastro);
         printf("------------------\n");
     }
 }
