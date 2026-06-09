@@ -53,9 +53,27 @@ Pessoa cadastrar_pessoa(int proximo_id) {
     p.id = proximo_id;
     p.data_cadastro = time(NULL); // Registra o momento exato do cadastro
 
+// Loop repete até o usuário fornecer um nome válido
+do {
     printf("\nDigite o nome: ");
-    fgets(p.nome, MAX_NOME, stdin);
-    p.nome[strcspn(p.nome, "\n")] = '\0'; // Remove o '\n' que fgets captura ao final
+    fgets(p.nome, MAX_NOME, stdin);// Verifica se o usuário digitou mais caracteres do que o limite permitido
+
+
+    // Quando o '\n' não é encontrado, significa que ainda sobraram caracteres no buffer
+    if (strchr(p.nome, '\n') == NULL) {
+        printf("Nome invalido. Digite no maximo 50 caracteres.\n");
+
+        // Limpa o restante dos caracteres digitados para não afetar o CPF
+        limpar_buffer_entrada();
+
+        // Esvazia o nome para forçar o loop a pedir novamente
+        p.nome[0] = '\0';
+    } else {
+        // Remove o '\n' que fgets captura ao final quando o nome está dentro do limite
+        p.nome[strcspn(p.nome, "\n")] = '\0';
+    }
+
+} while (strlen(p.nome) == 0);
 
     // Loop repete até o usuário fornecer um CPF válido
     do {

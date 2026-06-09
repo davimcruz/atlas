@@ -4,7 +4,7 @@
 #define PESSOA_H
 
 // Tamanhos máximos dos campos de texto
-#define MAX_NOME     50
+#define MAX_NOME     51
 #define MAX_EMAIL    50
 #define MAX_TELEFONE 12
 #define MAX_CPF      12
